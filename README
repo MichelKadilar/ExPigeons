@@ -1,0 +1,9 @@
+Exemples : 1 pigeon 2 nids et 2 pigeons 2 nids
+
+Exemple 1 :
+m = 1
+n = 2
+On note P(1,2) le fait d'avoir 1 pigeon et 2 nids.
+On définit la variable x(m,n) comme vraie si le pigeon m est dans le nid n et qui vaut faux sinon.
+
+CNF : x(1,1) OU x(1,2)
