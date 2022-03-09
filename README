@@ -1,3 +1,25 @@
+Comment lancer mon programme ?
+
+• Se placer dans le répértoire ExPigeons/maven/
+• Lancer dans le terminal (Debian) les commandes suivantes dans l'ordre :
+mvn clean install
+mvn compile
+
+J'ai crée 3 cas de tests :
+
+• Le cas où m = 5 et n = 5 ; -> SAT. Ce test est réalisé dans la classe Main;
+A lancer désormais avec la commande : mvn exec:java -Dexec.mainClass=pigeon.Main
+
+• Le cas où m = 6 et n = 7 ; -> SAT. Ce test est réalisé dans la classe Main2;
+A lancer désormais avec la commande : mvn exec:java -Dexec.mainClass=pigeon.Main2
+
+• Le cas où m = 8 et n = 7; -> UNSAT. Ce test est réalisé dans la classe Main3;
+A lancer désormais avec la commande : mvn exec:java -Dexec.mainClass=pigeon.Main3
+
+Lancer le programme avec la commande : mvn exec:java -Dexec.mainClass=pigeon.Main4
+Vous permettra de rentrer le nombre m de pigeons que vous voulez, suivi du nombre n de nids que vous voulez, comme demandé dans le terminal !
+
+
 Exemples : 1 pigeon 2 nids et 2 pigeons 2 nids
 
 Exemple 1 :
