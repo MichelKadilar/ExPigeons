@@ -17,8 +17,8 @@ public class Main {
         m = sc1.nextInt();
         System.out.println("Veuillez entrer un nombre de nids : ");
         n = sc2.nextInt(); */
-        m = 8;
-        n = 7;
+        m = 3;
+        n = 3;
         pigeon.satSolver(m, n);
     }
 }

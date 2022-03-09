@@ -6,17 +6,15 @@ import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.ISolver;
 import org.sat4j.specs.TimeoutException;
-import org.sat4j.tools.DimacsOutputSolver;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.LongStream;
 
 public class Pigeon {
-
-    static long factCalculator(int n) {
-        return LongStream.rangeClosed(1, n).reduce(1, (long num1, long num2) -> num1 * num2);
-    }
 
     public static BigInteger factorial(int number) {
         BigInteger factorial = BigInteger.ONE;
@@ -60,24 +58,52 @@ public class Pigeon {
         return subarrays;
     }
 
+    public void creerFichier() {
+        try {
+            File myObj = new File("resultat.txt");
+            myObj.createNewFile();
+        } catch (IOException e) {
+            System.out.println("Erreur durant la création du fichier.");
+            e.printStackTrace();
+        }
+    }
+
+    public void writeInFichier(String model) {
+        try {
+            FileWriter myWriter = new FileWriter("resultat.txt");
+            myWriter.write(model);
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("Erreur durant l'écriture dans le fichier.");
+            e.printStackTrace();
+        }
+    }
+
     public void satSolver(int m, int n) throws ContradictionException, TimeoutException {
         ISolver solver = SolverFactory.newDefault();
-        DimacsOutputSolver dm = new DimacsOutputSolver();
+        //DimacsOutputSolver dm = new DimacsOutputSolver();
+        StringBuilder stringBuilder = new StringBuilder("p cnf ");
+        creerFichier();
         solver.setTimeout(60);
-        dm.setTimeout(60);
+        //dm.setTimeout(60);
         solver.newVar(n * m);
-        dm.newVar(n * m);
-        solver.setExpectedNumberOfClauses(((factorial(m).multiply(BigInteger.valueOf(n)).divide((factorial(m - 2).multiply(BigInteger.valueOf(2))))).add(BigInteger.valueOf(m))).intValue());
-        dm.setExpectedNumberOfClauses(((factorial(m).multiply(BigInteger.valueOf(n)).divide((factorial(m - 2).multiply(BigInteger.valueOf(2))))).add(BigInteger.valueOf(m))).intValue());
+        int deuxParmiM = m + ((( m * (m - 1)) * n) / 2);
+        stringBuilder.append(n * m).append(" ").append(deuxParmiM).append("\n");
+        //dm.newVar(n * m);
+
+        solver.setExpectedNumberOfClauses(deuxParmiM);
+        //dm.setExpectedNumberOfClauses(nb);
         int[][] pb = new int[m][n];
         int variables = 1;
         for (int ligne = 0; ligne < m; ligne++) {
             for (int colonne = 0; colonne < n; colonne++) {
                 pb[ligne][colonne] = variables;
+                stringBuilder.append(variables).append(" ");
                 variables++;
             }
             solver.addClause(new VecInt(pb[ligne]));
-            dm.addClause(new VecInt(pb[ligne]));
+            stringBuilder.append("0\n");
+            //dm.addClause(new VecInt(pb[ligne]));
         } // On crée m * n variables différentes x(1,1), x(1,2)...x(m,n)
 
         int j = 0;
@@ -90,16 +116,19 @@ public class Pigeon {
                 int[] tmp = new int[2];
                 for (int b = 0; b < l.size(); b++) {
                     tmp[b] = l.get(b);
+                    stringBuilder.append(-1 * l.get(b)).append(" ");
                 }
                 multiplyArrayByFactor(tmp, -1);
                 solver.addClause(new VecInt(tmp));
-                dm.addClause(new VecInt(tmp));
+                stringBuilder.append("0\n");
+                //dm.addClause(new VecInt(tmp));
             }
             j++;
         }
         if (solver.isSatisfiable()) {
             int[] model = solver.model();
             System.out.println(Arrays.toString(model));
+            writeInFichier(stringBuilder.toString());
         } else {
             System.out.println("UNSAT");
         }
