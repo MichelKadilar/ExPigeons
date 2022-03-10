@@ -12,23 +12,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.stream.LongStream;
 
 public class Pigeon {
-
-    public static BigInteger factorial(int number) {
-        BigInteger factorial = BigInteger.ONE;
-        for (int i = number; i > 0; i--) {
-            factorial = factorial.multiply(BigInteger.valueOf(i));
-        }
-        return factorial;
-    }
-
-    static void multiplyArrayByFactor(int[] array, int factor) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = array[i] * (factor);
-        }
-    }
 
     public static void findCombinations(int[] A, int i, int k,
                                         Set<List<Integer>> subarrays,
@@ -81,29 +66,23 @@ public class Pigeon {
 
     public void satSolver(int m, int n) throws ContradictionException, TimeoutException {
         ISolver solver = SolverFactory.newDefault();
-        //DimacsOutputSolver dm = new DimacsOutputSolver();
         StringBuilder stringBuilder = new StringBuilder("p cnf ");
         creerFichier();
         solver.setTimeout(60);
-        //dm.setTimeout(60);
         solver.newVar(n * m);
-        int deuxParmiM = m + ((( m * (m - 1)) * n) / 2);
+        int deuxParmiM = m + (((m * (m - 1)) * n) / 2);
         stringBuilder.append(n * m).append(" ").append(deuxParmiM).append("\n");
-        //dm.newVar(n * m);
-
         solver.setExpectedNumberOfClauses(deuxParmiM);
-        //dm.setExpectedNumberOfClauses(nb);
         int[][] pb = new int[m][n];
-        int variables = 1;
+        int variable = 1;
         for (int ligne = 0; ligne < m; ligne++) {
             for (int colonne = 0; colonne < n; colonne++) {
-                pb[ligne][colonne] = variables;
-                stringBuilder.append(variables).append(" ");
-                variables++;
+                pb[ligne][colonne] = variable;
+                stringBuilder.append(variable).append(" ");
+                variable++;
             }
             solver.addClause(new VecInt(pb[ligne]));
             stringBuilder.append("0\n");
-            //dm.addClause(new VecInt(pb[ligne]));
         } // On crée m * n variables différentes x(1,1), x(1,2)...x(m,n)
 
         int j = 0;
@@ -115,13 +94,11 @@ public class Pigeon {
             for (List<Integer> l : findCombinations(temp, 2)) {
                 int[] tmp = new int[2];
                 for (int b = 0; b < l.size(); b++) {
-                    tmp[b] = l.get(b);
+                    tmp[b] = -1*l.get(b);
                     stringBuilder.append(-1 * l.get(b)).append(" ");
                 }
-                multiplyArrayByFactor(tmp, -1);
                 solver.addClause(new VecInt(tmp));
                 stringBuilder.append("0\n");
-                //dm.addClause(new VecInt(tmp));
             }
             j++;
         }
@@ -133,6 +110,4 @@ public class Pigeon {
             System.out.println("UNSAT");
         }
     }
-
-
 }
